@@ -4,8 +4,9 @@
     nav = document.querySelector("[data-nav]");
 
   if (nav) {
-    // Space the page leaves for the bar.
+    // Space the page leaves for the bar (measured while the tabs are showing).
     const space = () => {
+      if (nav.classList.contains("is-compact")) return;
       const top = parseFloat(getComputedStyle(nav).top) || 0;
       root.style.setProperty("--nav-space", Math.round(nav.offsetHeight + 2 * top) + "px");
     };
@@ -22,19 +23,33 @@
       })
       .filter(Boolean);
 
-    // Hide on the way down, come back on the way up; the bottom edge tracks reading progress.
-    let lastY = scrollY,
-      hidden = false,
+    // Past the top, the tabs fold into an arrow. Hover (or tap the arrow) to bring them back.
+    const more = nav.querySelector(".nav-more");
+    let compact = false,
+      open = false,
+      openY = 0,
       raf = 0;
-    const setHidden = (h) => h !== hidden && nav.classList.toggle("is-hidden", (hidden = h));
+    const setOpen = (o) => {
+      open = o;
+      openY = scrollY;
+      nav.classList.toggle("is-open", o);
+      more && more.setAttribute("aria-expanded", String(o));
+    };
+    more &&
+      more.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setOpen(!open);
+      });
+    document.addEventListener("click", (e) => open && !nav.contains(e.target) && setOpen(false));
+    addEventListener("keydown", (e) => open && e.key === "Escape" && (setOpen(false), more && more.focus()));
+
+    // The bottom edge tracks reading progress.
     const tick = () => {
       raf = 0;
       const y = scrollY,
-        dy = y - lastY;
-      if (Math.abs(dy) > 8 || y < 80) {
-        setHidden(dy > 0 && y > 80 && !nav.contains(document.activeElement));
-        lastY = y;
-      }
+        c = y > 60;
+      c !== compact && (nav.classList.toggle("is-compact", (compact = c)), c || setOpen(false));
+      open && Math.abs(y - openY) > 120 && setOpen(false);
       const max = root.scrollHeight - innerHeight;
       nav.style.setProperty("--p", max > 0 ? Math.min(1, y / max).toFixed(4) : 0);
       if (spy.length) {
@@ -48,7 +63,6 @@
       }
     };
     addEventListener("scroll", () => raf || (raf = requestAnimationFrame(tick)), { passive: true });
-    nav.addEventListener("focusin", () => setHidden(false));
     tick();
   }
 

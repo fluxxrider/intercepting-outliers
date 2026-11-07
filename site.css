@@ -21,7 +21,6 @@
 /* ---------- Nav (every page) ---------- */
 :root{--nav-space:110px}
 .nav{position:fixed;z-index:15;top:12px;left:0;right:0;margin:0 auto;width:min(540px,calc(100% - 24px));background:rgba(255,255,248,.88);-webkit-backdrop-filter:saturate(1.6) blur(14px);backdrop-filter:saturate(1.6) blur(14px);border:1px solid var(--rule);border-radius:14px;box-shadow:0 12px 32px -20px rgba(17,17,17,.28);transition:transform .45s var(--ease),opacity .45s var(--ease)}
-.nav.is-hidden{transform:translateY(calc(-100% - 18px));opacity:0}
 .nav::after{content:"";position:absolute;left:14px;right:14px;bottom:-1px;height:2px;border-radius:2px;background:var(--accent);transform:scaleX(var(--p,0));transform-origin:0 50%;pointer-events:none}
 .nav-top{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:5px 12px}
 .nav-mark{justify-self:start;display:inline-flex;padding:4px 2px;color:var(--ink)}
@@ -30,7 +29,7 @@
 .nav-mark .m-line{fill:none;stroke:var(--accent);stroke-width:1.6;stroke-linecap:round}
 .nav-mark .m-out{fill:var(--accent)}
 .nav-name{font:400 22px/1 var(--serif);letter-spacing:-.01em;color:var(--ink);text-decoration:none;white-space:nowrap;padding:6px 4px}
-.nav-links{display:flex;border-top:1px solid var(--rule)}
+.nav-links{display:flex}
 .nav-links a{flex:1 1 0;position:relative;text-align:center;padding:8px 10px 9px;font:400 17px/1.2 var(--serif);color:var(--ink-2);text-decoration:none;white-space:nowrap;transition:color .2s var(--ease)}
 .nav-links a+a:before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:1px;background:var(--rule)}
 .nav-links a:hover,.nav-links a:focus-visible{color:var(--accent)}
@@ -44,6 +43,23 @@
 .nav-links a{font-size:16px}
 }
 @media (prefers-reduced-motion: reduce){.nav{transition:none}}
+
+/* Past the top the tabs fold into an arrow; hover or tap it to open them again */
+.nav-more{justify-self:end;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;margin-right:-6px;padding:0;border:0;border-radius:8px;background:none;color:var(--ink-2);cursor:pointer;visibility:hidden;opacity:0;transform:rotate(180deg);transition:opacity .25s var(--ease),transform .35s var(--ease),color .2s var(--ease),visibility 0s .25s}
+.nav-more svg{width:12px;height:8px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.nav-more:hover,.nav-more:focus-visible{color:var(--accent)}
+.nav.is-compact .nav-more{visibility:visible;opacity:1;transition-delay:0s}
+.nav-drawer{display:grid;grid-template-rows:1fr;border-top:1px solid var(--rule);transition:grid-template-rows .35s var(--ease),border-color .35s var(--ease)}
+.nav-drawer>.nav-links{min-height:0;overflow:hidden}
+@media (hover: hover){
+.nav.is-compact:not(.is-open):not(:hover):not(:has(:focus-visible)) .nav-drawer{grid-template-rows:0fr;border-top-color:transparent}
+.nav.is-compact:not(.is-open):not(:hover):not(:has(:focus-visible)) .nav-more{transform:none}
+}
+@media (hover: none){
+.nav.is-compact:not(.is-open):not(:has(:focus-visible)) .nav-drawer{grid-template-rows:0fr;border-top-color:transparent}
+.nav.is-compact:not(.is-open):not(:has(:focus-visible)) .nav-more{transform:none}
+}
+@media (prefers-reduced-motion: reduce){.nav-drawer,.nav-more{transition:none}}
 
 /* Footer wordmark links home */
 .foot-mark{display:block;color:var(--ink);text-decoration:none;pointer-events:auto}
