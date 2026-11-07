@@ -13,15 +13,6 @@
     addEventListener("resize", space);
     document.fonts && document.fonts.ready.then(space);
 
-    // Home: the wordmark joins the bar once the big hero title has scrolled away.
-    const title = document.querySelector(".hero .title");
-    if (title && "IntersectionObserver" in window) {
-      nav.classList.add("name-off");
-      new IntersectionObserver(([e]) => nav.classList.toggle("name-off", e.isIntersecting), {
-        rootMargin: "-90px 0px 0px 0px",
-      }).observe(title);
-    }
-
     // Links to sections on this page light up while that section is on screen.
     const spy = [...nav.querySelectorAll(".nav-links a")]
       .map((a) => {
